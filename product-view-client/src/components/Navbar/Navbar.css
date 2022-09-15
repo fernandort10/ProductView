@@ -1,0 +1,23 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #25316d;
+  color: #97d2ec;
+}
+
+.navbar > button {
+  height: 2.5rem;
+  width: 5.5rem;
+  margin-right: 8rem;
+  background-color: #97d2ec;
+  color: #25316d;
+  border-style: none;
+  border-radius: 5px;
+  align-items: center;
+  font-size: medium;
+}
+
+.navbar > h1 {
+  margin-left: 8rem;
+}

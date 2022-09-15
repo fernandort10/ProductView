@@ -1,0 +1,29 @@
+.homepage-container {
+  background-color: #5f6f94;
+  padding-bottom: 12%;
+}
+
+.table-container {
+  width: 50%;
+  margin-top: 6rem;
+  margin-left: 31.5rem;
+  color: #97d2ec;
+  text-align: center;
+}
+
+.table {
+  font-size: large;
+  color: #97d2ec;
+  background-color: #25316d;
+}
+
+.order-button {
+  height: 2.5rem;
+  width: 5.5rem;
+  background-color: #97d2ec;
+  color: #25316d;
+  border-style: none;
+  border-radius: 5px;
+  align-items: center;
+  font-size: small;
+}
