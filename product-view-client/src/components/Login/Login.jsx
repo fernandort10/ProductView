@@ -40,7 +40,6 @@ export default function Login() {
         setPassword(json.data.password);
         localStorage.setItem("username", json.data.username);
         setIsAdmin(json.data.isAdmin);
-        console.log(json.data.password);
         navigate("/home");
       })
       .catch((err) => {
@@ -82,7 +81,7 @@ export default function Login() {
             </button>
           </div>
           <p className="forgot-password text-right mt-2">
-            <a href="#">Forgot password?</a>
+            <a href="#">Don't have an account?</a>
           </p>
         </div>
       </form>

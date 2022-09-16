@@ -76,21 +76,16 @@ export default function Homepage() {
     getProducts();
   }, []);
 
-  useEffect(() => {
-    console.log("");
-  }, [username]);
+  useEffect(() => {}, [username]);
 
   const getProducts = async () => {
     axios
       .get("http://127.0.0.1:8000/api/products")
       .then((json) => {
         setProducts(json.data);
-        console.log(json.data);
       })
       .catch((err) => {});
   };
-
-  console.log();
 
   const alertMessage = () => {
     alert("Coming Soon!");
@@ -103,8 +98,6 @@ export default function Homepage() {
       [e.target.name]: value,
     });
   };
-
-  console.log(productsData);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -131,7 +124,7 @@ export default function Homepage() {
         `http://127.0.0.1:8000/api/products${userData.name}`,
         userData
       );
-      console.log("borrado exitosamente");
+      console.log("Success");
     } catch (err) {
       alert(err);
     }
