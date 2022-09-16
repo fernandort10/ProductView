@@ -4,6 +4,7 @@ from userModel import Users
 import motor.motor_asyncio
 
 
+#Conexion to MongoDB
 client = motor.motor_asyncio.AsyncIOMotorClient('mongodb+srv://admin:admin@cluster0.eidgk04.mongodb.net/test')
 
 

@@ -33,6 +33,32 @@
   height: 2.5rem;
   width: 5.5rem;
   margin-bottom: 1rem;
+  margin-right: 2rem;
+  background-color: #97d2ec;
+  color: #25316d;
+  border-style: none;
+  border-radius: 2px;
+  align-items: center;
+  font-size: small;
+}
+
+.delete-product-button {
+  height: 2.5rem;
+  width: 5.5rem;
+  margin-bottom: 1rem;
+  margin-right: 2rem;
+  background-color: #97d2ec;
+  color: #25316d;
+  border-style: none;
+  border-radius: 2px;
+  align-items: center;
+  font-size: small;
+}
+
+.update-product-button {
+  height: 2.5rem;
+  width: 5.5rem;
+  margin-bottom: 1rem;
   background-color: #97d2ec;
   color: #25316d;
   border-style: none;

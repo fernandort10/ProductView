@@ -40,6 +40,10 @@ export default function Homepage() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [open2, setOpen2] = React.useState(false);
+  const handleOpen2 = () => setOpen2(true);
+  const handleClose2 = () => setOpen2(false);
+
   const [productsData, setProductsData] = useState({
     name: "",
     price: "",
@@ -117,6 +121,23 @@ export default function Homepage() {
     window.location.reload(false);
   };
 
+  const handleSubmitDelete = (e) => {
+    e.preventDefault();
+    const userData = {
+      name: productsData.name,
+    };
+    try {
+      axios.delete(
+        `http://127.0.0.1:8000/api/products${userData.name}`,
+        userData
+      );
+      console.log("borrado exitosamente");
+    } catch (err) {
+      alert(err);
+    }
+    window.location.reload(false);
+  };
+
   return (
     <div className="homepage-container">
       <Navbar />
@@ -127,6 +148,12 @@ export default function Homepage() {
             <h5>List of Products</h5>
             <button onClick={handleOpen} className="add-product-button">
               Add Product
+            </button>
+            <button onClick={handleOpen2} className="delete-product-button">
+              Delete Product
+            </button>
+            <button onClick={handleOpen} className="update-product-button">
+              Update Product
             </button>
             <Paper sx={{ width: "100%", overflow: "hidden" }}>
               <TableContainer className="table" sx={{ textAlign: "center" }}>
@@ -161,72 +188,49 @@ export default function Homepage() {
                       >
                         Action
                       </TableCell>
-                      <TableCell
-                        sx={{ width: "0%", fontSize: "large" }}
-                        align="center"
-                      >
-                        Administrator Action
-                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {products.map((item, index) => {
-                      return (
-                        <TableRow hover role="checkbox">
-                          <TableCell
-                            sx={{ fontSize: "large", color: "white" }}
-                            align="center"
-                          >
-                            {index + 1}
-                          </TableCell>
-                          <TableCell
-                            sx={{ fontSize: "large", color: "white" }}
-                            align="center"
-                          >
-                            {item.name}
-                          </TableCell>
-                          <TableCell
-                            sx={{ fontSize: "large", color: "white" }}
-                            align="center"
-                          >
-                            ${item.price}
-                          </TableCell>
-                          <TableCell
-                            sx={{ fontSize: "large", color: "white" }}
-                            align="center"
-                          >
-                            <button
-                              className="order-button"
-                              onClick={() => alertMessage()}
+                    {products
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map((item, index) => {
+                        return (
+                          <TableRow hover role="checkbox">
+                            <TableCell
+                              sx={{ fontSize: "large", color: "white" }}
+                              align="center"
                             >
-                              Order Now
-                            </button>
-                          </TableCell>
-
-                          <TableCell
-                            sx={{
-                              fontSize: "large",
-                              color: "white",
-                              display: "flex",
-                            }}
-                            align="center"
-                          >
-                            <button
-                              className="order-button"
-                              onClick={() => alertMessage()}
+                              {index + 1}
+                            </TableCell>
+                            <TableCell
+                              sx={{ fontSize: "large", color: "white" }}
+                              align="center"
                             >
-                              Update Product
-                            </button>
-                            <button
-                              className="order-button"
-                              onClick={() => alertMessage()}
+                              {item.name}
+                            </TableCell>
+                            <TableCell
+                              sx={{ fontSize: "large", color: "white" }}
+                              align="center"
                             >
-                              Delete Product
-                            </button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                              ${item.price}
+                            </TableCell>
+                            <TableCell
+                              sx={{ fontSize: "large", color: "white" }}
+                              align="center"
+                            >
+                              <button
+                                className="order-button"
+                                onClick={() => alertMessage()}
+                              >
+                                Order Now
+                              </button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -371,6 +375,41 @@ export default function Homepage() {
                     Save
                   </button>
                   <button className="close-button" onClick={handleClose}>
+                    close
+                  </button>
+                </div>
+              </form>
+            </div>
+          </Box>
+        </Modal>
+      </div>
+
+      <div className="modal">
+        <Modal
+          open={open2}
+          onClose={handleClose2}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <div className="form-container">
+              <h3>Delete product!</h3>
+              <form
+                onSubmit={handleSubmitDelete}
+                className="update-product-form"
+              >
+                <h4>Name:</h4>
+                <input
+                  onChange={handleChange}
+                  type="text"
+                  name="name"
+                  value={productsData.name}
+                />
+                <div className="button-container">
+                  <button type="submit" className="close-button">
+                    Save
+                  </button>
+                  <button className="close-button" onClick={handleClose2}>
                     close
                   </button>
                 </div>
