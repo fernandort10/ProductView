@@ -1,6 +1,7 @@
 .homepage-container {
   background-color: #5f6f94;
-  padding-bottom: 12%;
+  padding-bottom: 20rem;
+  align-content: space-between;
 }
 
 .table-container {
@@ -26,4 +27,32 @@
   border-radius: 5px;
   align-items: center;
   font-size: small;
+}
+
+.add-product-button {
+  height: 2.5rem;
+  width: 5.5rem;
+  margin-bottom: 1rem;
+  background-color: #97d2ec;
+  color: #25316d;
+  border-style: none;
+  border-radius: 2px;
+  align-items: center;
+  font-size: small;
+}
+
+.form-container {
+  text-align: center;
+}
+
+.button-container {
+  margin-top: 40px;
+  display: flex;
+  align-content: space-between;
+}
+
+.close-button {
+  margin-left: 75px;
+  padding: 10px;
+  border-radius: 5px;
 }

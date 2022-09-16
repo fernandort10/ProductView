@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./Homepage.css";
 import { useEffect } from "react";
 import Navbar from "../Navbar/Navbar";
@@ -12,11 +12,39 @@ import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/Paper";
 
 import Footer from "../Footer/Footer";
+import { UserContext } from "../UserProvider/UserProvider";
+import axios from "axios";
+
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 export default function Homepage() {
   const [products, setProducts] = useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(100);
+  const [adminValue, setAdminValue] = useState(null);
+
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const [productsData, setProductsData] = useState({
+    name: "",
+    price: "",
+  });
+  var { username, password } = useContext(UserContext);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -27,114 +55,331 @@ export default function Homepage() {
     setPage(0);
   };
 
+  const url = "http://127.0.0.1:8000/api/users";
+
+  useEffect(() => {
+    axios
+      .get(`${url}/${username}/${password}`)
+      .then((json) => {
+        setAdminValue(json.data.isAdmin);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   useEffect(() => {
     getProducts();
   }, []);
 
+  useEffect(() => {
+    console.log("");
+  }, [username]);
+
   const getProducts = async () => {
-    const response = await fetch("http://127.0.0.1:8000/api/products");
-    const data = await response.json();
-    setProducts(data);
+    axios
+      .get("http://127.0.0.1:8000/api/products")
+      .then((json) => {
+        setProducts(json.data);
+        console.log(json.data);
+      })
+      .catch((err) => {});
   };
+
+  console.log();
 
   const alertMessage = () => {
     alert("Coming Soon!");
   };
 
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setProductsData({
+      ...productsData,
+      [e.target.name]: value,
+    });
+  };
+
+  console.log(productsData);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const userData = {
+      name: productsData.name,
+      price: productsData.price,
+    };
+
+    axios
+      .post("http://127.0.0.1:8000/api/products", userData)
+      .then((response) => {
+        console.log(response);
+      });
+    window.location.reload(false);
+  };
+
   return (
     <div className="homepage-container">
       <Navbar />
-      <div className="table-container">
-        <h1>List of Products</h1>
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer
-            className="table"
-            sx={{ maxHeight: 440, textAlign: "center" }}
-          >
-            <Table stickyHeader aria-label="sticky table" sx={{}}>
-              <TableHead>
-                <TableRow>
-                  <TableCell
-                    sx={{
-                      width: "0%",
-                      backgroundColor: "primary",
-                      fontSize: "large",
-                    }}
-                    align="center"
-                  >
-                    No.
-                  </TableCell>
-                  <TableCell
-                    sx={{ width: "0%", fontSize: "large" }}
-                    align="center"
-                  >
-                    Product Name
-                  </TableCell>
-                  <TableCell
-                    sx={{ width: "0%", fontSize: "large" }}
-                    align="center"
-                  >
-                    Price
-                  </TableCell>
-                  <TableCell
-                    sx={{ width: "0%", fontSize: "large" }}
-                    align="center"
-                  >
-                    Action
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {products
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((item, index) => {
-                    return (
-                      <TableRow hover role="checkbox">
-                        <TableCell
-                          sx={{ fontSize: "large", color: "white" }}
-                          align="center"
-                        >
-                          {index + 1}
-                        </TableCell>
-                        <TableCell
-                          sx={{ fontSize: "large", color: "white" }}
-                          align="center"
-                        >
-                          {item.name}
-                        </TableCell>
-                        <TableCell
-                          sx={{ fontSize: "large", color: "white" }}
-                          align="center"
-                        >
-                          ${item.price}
-                        </TableCell>
-                        <TableCell
-                          sx={{ fontSize: "large", color: "white" }}
-                          align="center"
-                        >
-                          <button
-                            className="order-button"
-                            onClick={() => alertMessage()}
+      <div>
+        {adminValue ? (
+          <div className="table-container">
+            <h1>Welcome {username}!</h1>
+            <h5>List of Products</h5>
+            <button onClick={handleOpen} className="add-product-button">
+              Add Product
+            </button>
+            <Paper sx={{ width: "100%", overflow: "hidden" }}>
+              <TableContainer className="table" sx={{ textAlign: "center" }}>
+                <Table stickyHeader aria-label="sticky table" sx={{}}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        sx={{
+                          width: "0%",
+                          backgroundColor: "primary",
+                          fontSize: "large",
+                        }}
+                        align="center"
+                      >
+                        No.
+                      </TableCell>
+                      <TableCell
+                        sx={{ width: "0%", fontSize: "large" }}
+                        align="center"
+                      >
+                        Product Name
+                      </TableCell>
+                      <TableCell
+                        sx={{ width: "0%", fontSize: "large" }}
+                        align="center"
+                      >
+                        Price
+                      </TableCell>
+                      <TableCell
+                        sx={{ width: "0%", fontSize: "large" }}
+                        align="center"
+                      >
+                        Action
+                      </TableCell>
+                      <TableCell
+                        sx={{ width: "0%", fontSize: "large" }}
+                        align="center"
+                      >
+                        Administrator Action
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {products.map((item, index) => {
+                      return (
+                        <TableRow hover role="checkbox">
+                          <TableCell
+                            sx={{ fontSize: "large", color: "white" }}
+                            align="center"
                           >
-                            Order Now
-                          </button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 100]}
-            component="div"
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
+                            {index + 1}
+                          </TableCell>
+                          <TableCell
+                            sx={{ fontSize: "large", color: "white" }}
+                            align="center"
+                          >
+                            {item.name}
+                          </TableCell>
+                          <TableCell
+                            sx={{ fontSize: "large", color: "white" }}
+                            align="center"
+                          >
+                            ${item.price}
+                          </TableCell>
+                          <TableCell
+                            sx={{ fontSize: "large", color: "white" }}
+                            align="center"
+                          >
+                            <button
+                              className="order-button"
+                              onClick={() => alertMessage()}
+                            >
+                              Order Now
+                            </button>
+                          </TableCell>
+
+                          <TableCell
+                            sx={{
+                              fontSize: "large",
+                              color: "white",
+                              display: "flex",
+                            }}
+                            align="center"
+                          >
+                            <button
+                              className="order-button"
+                              onClick={() => alertMessage()}
+                            >
+                              Update Product
+                            </button>
+                            <button
+                              className="order-button"
+                              onClick={() => alertMessage()}
+                            >
+                              Delete Product
+                            </button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 100]}
+                component="div"
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </Paper>
+          </div>
+        ) : !adminValue ? (
+          <div className="table-container">
+            <h1>Welcome {username}!</h1>
+            <h5>List of Products</h5>
+            <Paper sx={{ width: "100%", overflow: "hidden" }}>
+              <TableContainer
+                className="table"
+                sx={{ maxHeight: 440, textAlign: "center" }}
+              >
+                <Table stickyHeader aria-label="sticky table" sx={{}}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        sx={{
+                          width: "0%",
+                          backgroundColor: "primary",
+                          fontSize: "large",
+                        }}
+                        align="center"
+                      >
+                        No.
+                      </TableCell>
+                      <TableCell
+                        sx={{ width: "0%", fontSize: "large" }}
+                        align="center"
+                      >
+                        Product Name
+                      </TableCell>
+                      <TableCell
+                        sx={{ width: "0%", fontSize: "large" }}
+                        align="center"
+                      >
+                        Price
+                      </TableCell>
+                      <TableCell
+                        sx={{ width: "0%", fontSize: "large" }}
+                        align="center"
+                      >
+                        Action
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {products
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map((item, index) => {
+                        return (
+                          <TableRow hover role="checkbox">
+                            <TableCell
+                              sx={{ fontSize: "large", color: "white" }}
+                              align="center"
+                            >
+                              {index + 1}
+                            </TableCell>
+                            <TableCell
+                              sx={{ fontSize: "large", color: "white" }}
+                              align="center"
+                            >
+                              {item.name}
+                            </TableCell>
+                            <TableCell
+                              sx={{ fontSize: "large", color: "white" }}
+                              align="center"
+                            >
+                              ${item.price}
+                            </TableCell>
+                            <TableCell
+                              sx={{ fontSize: "large", color: "white" }}
+                              align="center"
+                            >
+                              <button
+                                className="order-button"
+                                onClick={() => alertMessage()}
+                              >
+                                Order Now
+                              </button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 100]}
+                component="div"
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </Paper>
+          </div>
+        ) : (
+          <h1>Error</h1>
+        )}
       </div>
+
+      <div className="modal">
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <div className="form-container">
+              <h3>Create product!</h3>
+              <form onSubmit={handleSubmit} className="update-product-form">
+                <h4>Name:</h4>
+                <input
+                  onChange={handleChange}
+                  type="text"
+                  name="name"
+                  value={productsData.name}
+                />
+                <h4>Price:</h4>
+                <input
+                  onChange={handleChange}
+                  type="text"
+                  name="price"
+                  value={productsData.price}
+                />
+                <div className="button-container">
+                  <button type="submit" className="close-button">
+                    Save
+                  </button>
+                  <button className="close-button" onClick={handleClose}>
+                    close
+                  </button>
+                </div>
+              </form>
+            </div>
+          </Box>
+        </Modal>
+      </div>
+
       <Footer />
     </div>
   );
